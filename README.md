@@ -112,23 +112,21 @@ grep "pattern" somefile.txt | nta
 - Remove notes excluding specific numbers (using / notation):
       
   ```bash
-      nt -rr -x 10/20```
+      nt -rr -x 10/20
+      ```
 - Remove the last 'n' notes (tail):
       
   ```bash
-      
       nt -rr -tail 10
-         ```
+      ```
 - Remove the first 'n' notes (head):
       
   ```bash
-      
       nt -rr -head 5
-         ```
+      ```
 - Mark a Note as Favorite:
 
 ```bash
-
 nt -f <line-number>
    ```
 - Display Help:
