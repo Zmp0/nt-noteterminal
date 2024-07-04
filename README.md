@@ -10,6 +10,14 @@
 - Remove specific notes by line number
 - Copy to the clipboard
 
+# Commands
+
+   -a [text]     Add a line"
+   -g [number]   Get a specific line"
+   -c [number]   Copy a specific line"
+   -r [number]   Remove a specific line"
+
+
 ## Installation
 
 To install `nt`:
@@ -27,8 +35,14 @@ To install `nt`:
    chmod +x uninstall.sh
    ./uninstall.sh
    ```
+. The install.sh script have alias that add to the shell configuration file,and the uninstall removes it
 
-
+ ```
+   alias nta='nt -a'
+   alias ntg='nt -g'
+   alias ntr='nt -r'
+   alias ntc='nt -c'
+ ```
 ### Examples
 
 - Add a Note:
