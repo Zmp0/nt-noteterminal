@@ -113,17 +113,17 @@ grep "pattern" somefile.txt | nta
       
   ```bash
       nt -rr -x 10/20
-      ```
+  ```
 - Remove the last 'n' notes (tail):
       
   ```bash
       nt -rr -tail 10
-      ```
+  ```
 - Remove the first 'n' notes (head):
       
   ```bash
       nt -rr -head 5
-      ```
+  ```
 - Mark a Note as Favorite:
 
 ```bash
