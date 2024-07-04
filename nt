@@ -128,6 +128,9 @@ while getopts "a:g:r:c:xf:h" opt; do
         r)
             remove_line "$OPTARG"
             ;;
+	rr)
+	    remove_all_notes "$OPTARG"
+	    ;;
         c)
             copy_line "$OPTARG"
             ;;
