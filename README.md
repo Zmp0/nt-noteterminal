@@ -43,6 +43,7 @@ To install `nt`:
    alias ntr='nt -r'
    alias ntc='nt -c'
  ```
+
 ### Examples
 
 - Add a Note:
