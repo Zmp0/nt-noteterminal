@@ -70,7 +70,7 @@ remove_notes_with_filters() {
             fi
             ;;
         *)
-            echo "Unknown filter type: $filter_type"
+            remove_all_notes
             ;;
     esac
 }
