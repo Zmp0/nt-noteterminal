@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# File to store notes
+NOTES_FILE="${HOME}/.nt_notes"
+
+# Ensure the notes file exists
+touch "$NOTES_FILE"
+
+# Function to add a line
+add_line() {
+    echo "$*" >> "$NOTES_FILE"
+}
+
+# Function to get a specific line
+get_line() {
+    sed -n "${1}p" "$NOTES_FILE"
+}
+
+# Function to list all lines with colored numbers and square boxes
+list_lines() {
+    awk '{printf "\033[1;34m%2d.\033[0m [ \033[0;32m%s\033[0m ]\n", NR, $0}' "$NOTES_FILE"
+}
+
+# Function to remove a specific line
+remove_line() {
+    sed -i "${1}d" "$NOTES_FILE"
+}
+
+# Function to copy a specific line to the clipboard
+copy_line() {
+    get_line "$1" | xclip -selection clipboard
+}
+
+# Check if input is coming from a pipe
+if [ ! -t 0 ]; then
+    while IFS= read -r line; do
+        add_line "$line"
+    done
+    exit 0
+fi
+
+# Check the first argument
+case "$1" in
+    -a)
+        shift
+        add_line "$*"
+        ;;
+    -g)
+        get_line "$2"
+        ;;
+    -r)
+        remove_line "$2"
+        ;;
+    -c)
+        copy_line "$2"
+        ;;
+    *)
+        list_lines
+        ;;
+esac
+
