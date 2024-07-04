@@ -1,33 +1,31 @@
 #!/bin/bash
 
-NT_SCRIPT="/usr/local/bin/nt"
-BASHRC="${HOME}/.bashrc"
-ZSHRC="${HOME}/.zshrc"
-ALIASES="alias nta='nt -a'\nalias ntg='nt -g'\nalias ntr='nt -r'"
+# Remove nt script from /usr/local/bin
+sudo rm -f /usr/local/bin/nt
 
-# Function to remove aliases from a shell configuration file
-remove_aliases() {
-    local shell_rc="$1"
-    if [ -f "$shell_rc" ]; then
-        sed -i "/alias nta='nt -a'/d" "$shell_rc"
-        sed -i "/alias ntg='nt -g'/d" "$shell_rc"
-        sed -i "/alias ntr='nt -r'/d" "$shell_rc"
-        echo "Aliases removed from $shell_rc"
-    else
-        echo "$shell_rc not found"
-    fi
-}
-
-# Remove the nt script from /usr/local/bin
-if [ -f "$NT_SCRIPT" ]; then
-    sudo rm "$NT_SCRIPT"
-    echo "Removed $NT_SCRIPT"
-else
-    echo "$NT_SCRIPT not found"
+# Remove aliases from .bashrc
+if [ -f "$HOME/.bashrc" ]; then
+    sed -i '/^alias nta/d' "$HOME/.bashrc"
+    sed -i '/^alias ntg/d' "$HOME/.bashrc"
+    sed -i '/^alias ntr/d' "$HOME/.bashrc"
+    sed -i '/^alias ntrr/d' "$HOME/.bashrc"
+    sed -i '/^alias ntc/d' "$HOME/.bashrc"
+    sed -i '/^alias ntf/d' "$HOME/.bashrc"
+    source "$HOME/.bashrc"
+    echo "Aliases removed from .bashrc"
 fi
 
-# Remove aliases from .bashrc and .zshrc if they exist
-remove_aliases "$BASHRC"
-remove_aliases "$ZSHRC"
+# Remove aliases from .zshrc
+if [ -f "$HOME/.zshrc" ]; then
+    sed -i '/^alias nta/d' "$HOME/.zshrc"
+    sed -i '/^alias ntg/d' "$HOME/.zshrc"
+    sed -i '/^alias ntr/d' "$HOME/.zshrc"
+    sed -i '/^alias ntrr/d' "$HOME/.zshrc"
+    sed -i '/^alias ntc/d' "$HOME/.zshrc"
+    sed -i '/^alias ntf/d' "$HOME/.zshrc"
+    source "$HOME/.zshrc"
+    echo "Aliases removed from .zshrc"
+fi
 
-echo "Uninstallation complete. Please restart your terminal or source your shell configuration file to apply changes."
+echo "nt uninstalled successfully!"
+

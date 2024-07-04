@@ -1,34 +1,29 @@
 #!/bin/bash
 
-NT_SCRIPT="nt"
-INSTALL_DIR="/usr/local/bin"
-BASHRC="${HOME}/.bashrc"
-ZSHRC="${HOME}/.zshrc"
-ALIASES="alias nta='nt -a'\nalias ntg='nt -g'\nalias ntr='nt -r'\nalias ntc='nt -c'"
+# Copy nt script to /usr/local/bin
+sudo cp nt /usr/local/bin/nt
 
-# Ensure the nt script is executable
-chmod +x "$NT_SCRIPT"
+# Add aliases to .bashrc or .zshrc
+if [ -f "$HOME/.bashrc" ]; then
+    echo 'alias nta="nt -a"' >> "$HOME/.bashrc"
+    echo 'alias ntg="nt -g"' >> "$HOME/.bashrc"
+    echo 'alias ntr="nt -r"' >> "$HOME/.bashrc"
+    echo 'alias ntrr="nt -rr"' >> "$HOME/.bashrc"
+    echo 'alias ntc="nt -c"' >> "$HOME/.bashrc"
+    echo 'alias ntf="nt -f"' >> "$HOME/.bashrc"
+    source "$HOME/.bashrc"
+    echo "Aliases added to .bashrc"
+elif [ -f "$HOME/.zshrc" ]; then
+    echo 'alias nta="nt -a"' >> "$HOME/.zshrc"
+    echo 'alias ntg="nt -g"' >> "$HOME/.zshrc"
+    echo 'alias ntr="nt -r"' >> "$HOME/.zshrc"
+    echo 'alias ntrr="nt -rr"' >> "$HOME/.zshrc"
+    echo 'alias ntc="nt -c"' >> "$HOME/.zshrc"
+    echo 'alias ntf="nt -f"' >> "$HOME/.zshrc"
+    source "$HOME/.zshrc"
+    echo "Aliases added to .zshrc"
+else
+    echo "Unsupported shell or configuration: aliases not added."
+fi
 
-# Copy the nt script to the /usr/local/bin directory
-sudo cp "$NT_SCRIPT" "$INSTALL_DIR"
-
-# Function to add aliases to a shell configuration file
-add_aliases() {
-    local shell_rc="$1"
-    if [ -f "$shell_rc" ]; then
-        if ! grep -q "alias nta='nt -a'" "$shell_rc"; then
-            echo -e "\n# nt aliases\n$ALIASES" >> "$shell_rc"
-            echo "Aliases added to $shell_rc"
-        else
-            echo "Aliases already present in $shell_rc"
-        fi
-    else
-        echo "$shell_rc not found"
-    fi
-}
-
-# Add aliases to .bashrc and .zshrc if they exist
-add_aliases "$BASHRC"
-add_aliases "$ZSHRC"
-
-echo "Installation complete. Please restart your terminal or source your shell configuration file to use the aliases."
+echo "nt installed successfully!"

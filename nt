@@ -18,7 +18,7 @@ get_line() {
 
 # Function to list all lines with colored numbers and square boxes
 list_lines() {
-    awk '{printf "\033[1;34m%2d.\033[0m [ \033[0;32m%s\033[0m ]\n", NR, $0}' "$NOTES_FILE"
+    awk '/^# FAVORITE:/ { next } {printf "\033[1;34m%2d.\033[0m [ \033[0;32m%s\033[0m ]\n", NR, $0}' "$NOTES_FILE"
 }
 
 # Function to remove a specific line
@@ -31,6 +31,72 @@ copy_line() {
     get_line "$1" | xclip -selection clipboard
 }
 
+# Function to remove all notes
+remove_all_notes() {
+    > "$NOTES_FILE"
+}
+
+# Function to remove notes with filters
+remove_notes_with_filters() {
+    local filter_type="$1"
+    shift
+    
+    case "$filter_type" in
+        -x)
+            # Remove all except specified line numbers
+            while [ $# -gt 0 ]; do
+                sed -i "${1}d" "$NOTES_FILE"
+                shift
+            done
+            ;;
+        -tail)
+            # Remove the last 'n' notes
+            local count="$1"
+            local total_lines=$(wc -l < "$NOTES_FILE")
+            local start_line=$(( total_lines - count + 1 ))
+            if [ "$start_line" -gt 0 ]; then
+                sed -i "${start_line},\$d" "$NOTES_FILE"
+            else
+                > "$NOTES_FILE"
+            fi
+            ;;
+        -head)
+            # Remove the first 'n' notes
+            local count="$1"
+            if [ "$count" -gt 0 ]; then
+                sed -i "1,${count}d" "$NOTES_FILE"
+            else
+                > "$NOTES_FILE"
+            fi
+            ;;
+        *)
+            echo "Unknown filter type: $filter_type"
+            ;;
+    esac
+}
+
+# Function to mark a note as favorite
+mark_favorite() {
+    local line_number="$1"
+    sed -i "${line_number}s/^/# FAVORITE: /" "$NOTES_FILE"
+}
+
+# Help function to display usage information
+display_help() {
+    echo "Usage: nt [OPTIONS]"
+    echo "Options:"
+    echo "  -a <note>        Add a new note"
+    echo "  -g <line-number> Get a specific note"
+    echo "  -r <line-number> Remove a specific note"
+    echo "  -c <line-number> Copy a specific note to clipboard"
+    echo "  -rr OPTIONS       Remove notes with filtering options:"
+    echo "     -x <numbers>       Remove all notes except specified line numbers"
+    echo "     -tail <count>      Remove the last 'n' notes"
+    echo "     -head <count>      Remove the first 'n' notes"
+    echo "  -f <line-number> Mark a note as favorite"
+    echo "  -h               Display this help message"
+}
+
 # Check if input is coming from a pipe
 if [ ! -t 0 ]; then
     while IFS= read -r line; do
@@ -39,23 +105,75 @@ if [ ! -t 0 ]; then
     exit 0
 fi
 
-# Check the first argument
-case "$1" in
-    -a)
-        shift
-        add_line "$*"
-        ;;
-    -g)
-        get_line "$2"
-        ;;
-    -r)
-        remove_line "$2"
-        ;;
-    -c)
-        copy_line "$2"
-        ;;
-    *)
-        list_lines
-        ;;
-esac
+# Process command-line options
+if [ $# -eq 0 ]; then
+    list_lines
+    exit 0
+fi
 
+# Check if only ntrr is invoked, remove all notes
+if [ "$1" == "-rr" ] && [ $# -eq 1 ]; then
+    remove_all_notes
+    exit 0
+fi
+
+while getopts "a:g:r:c:xf:h" opt; do
+    case $opt in
+        a)
+            add_line "$OPTARG"
+            ;;
+        g)
+            get_line "$OPTARG"
+            ;;
+        r)
+            remove_line "$OPTARG"
+            ;;
+        c)
+            copy_line "$OPTARG"
+            ;;
+        x)
+            remove_notes_with_filters -x "${OPTARG[@]}"
+            ;;
+        f)
+            mark_favorite "$OPTARG"
+            ;;
+        tail)
+            remove_notes_with_filters -tail "$OPTARG"
+            ;;
+        head)
+            remove_notes_with_filters -head "$OPTARG"
+            ;;
+        h)
+            display_help
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            display_help
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument."
+            display_help
+            exit 1
+            ;;
+    esac
+done
+
+# Shift the processed options out of the arguments
+shift $((OPTIND - 1))
+
+# If there are remaining arguments, display help
+if [ $# -gt 0 ]; then
+    echo "Unexpected argument(s): $@"
+    display_help
+    exit 1
+fi
+
+# If no valid options were provided, display help
+if [ $OPTIND -eq 1 ]; then
+    display_help
+    exit 1
+fi
+
+# List all notes by default if no options were specified
+list_lines
