@@ -12,10 +12,16 @@
 
 ## Commands
 ```
-   -a [text]     Add a line"
-   -g [number]   Get a specific line"
-   -c [number]   Copy a specific line"
-   -r [number]   Remove a specific line"
+  -a <note>        Add a new note
+  -g <line-number> Get a specific note
+  -r <line-number> Remove a specific note
+  -c <line-number> Copy a specific note to clipboard
+  -rr OPTIONS       Remove notes with filtering options:
+     -x <numbers>       Remove all notes except specified line numbers
+     -tail <count>      Remove the last 'n' notes
+     -head <count>      Remove the first 'n' notes
+  -f <line-number> Mark a note as favorite
+  -h               Display help message
 ```
 
 ## Installation
@@ -42,6 +48,8 @@ To install `nt`:
    alias ntg='nt -g'
    alias ntr='nt -r'
    alias ntc='nt -c'
+   alias ntrr='nt -rr'
+   alias ntf='nt -f'
  ```
 
 ### Examples
@@ -93,4 +101,39 @@ Add the output of grep:
 ```sh
 
 grep "pattern" somefile.txt | nta
+   ```
+- Remove Notes with Filters:
+
+    Remove all notes except specified line numbers:
+
+     ```bash
+  nt -rr -x 1 3 5 6
+   ```
+- Remove notes excluding specific numbers (using / notation):
+      
+  ```bash
+      nt -rr -x 10/20```
+- Remove the last 'n' notes (tail):
+      
+  ```bash
+      
+      nt -rr -tail 10
+         ```
+- Remove the first 'n' notes (head):
+      
+  ```bash
+      
+      nt -rr -head 5
+         ```
+- Mark a Note as Favorite:
+
+```bash
+
+nt -f <line-number>
+   ```
+- Display Help:
+
+```bash
+
+nt -h
    ```
