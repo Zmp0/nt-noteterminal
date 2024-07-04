@@ -10,13 +10,13 @@
 - Remove specific notes by line number
 - Copy to the clipboard
 
-# Commands
-
+## Commands
+```
    -a [text]     Add a line"
    -g [number]   Get a specific line"
    -c [number]   Copy a specific line"
    -r [number]   Remove a specific line"
-
+```
 
 ## Installation
 
